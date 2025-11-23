@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>履歴管理 - 入園管理システム</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>入園履歴管理</h1>
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="navigation">
+        <a href="/">入場判定</a>
+        <a href="/tickets-page">チケット管理</a>
+        <a href="/history-page" class="active">履歴管理</a>
+    </div>
+
+    <!-- 検索パネル -->
+    <div class="input-panel">
+        <h3>履歴検索</h3>
+        <div class="input-group">
+            <label for="searchTktNumber">TKT番号:</label>
+            <input type="text" id="searchTktNumber" placeholder="TKT番号で検索">
+            <button onclick="searchHistory()">検索</button>
+            <button class="btn-secondary" onclick="clearSearch()">クリア</button>
+        </div>
+    </div>
+
+    <!-- 履歴一覧テーブル -->
+    <div class="table-panel">
+        <h3>入園履歴一覧</h3>
+        <button onclick="loadHistory()" style="margin-bottom: 10px;">更新</button>
+        <button onclick="exportHistory()" style="margin-bottom: 10px;">CSV出力</button>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>TKT番号</th>
+                    <th>入園時間</th>
+                    <th>判定結果</th>
+                    <th>コメント</th>
+                    <th>再入場</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- 動的に行を追加 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 編集モーダル -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>履歴編集</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <input type="hidden" id="editLogId">
+            <div class="form-group">
+                <label for="editTktNumber">TKT番号:</label>
+                <input type="text" id="editTktNumber" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editEntryTime">入園時間:</label>
+                <input type="datetime-local" id="editEntryTime">
+            </div>
+            <div class="form-group">
+                <label for="editResult">判定結果:</label>
+                <select id="editResult">
+                    <option value="OK">OK</option>
+                    <option value="NG">NG</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editComment">コメント:</label>
+                <textarea id="editComment"></textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="editIsReentry">
+                    再入場
+                </label>
+            </div>
+            <button onclick="updateHistory()">更新</button>
+            <button class="btn-secondary" onclick="closeEditModal()">キャンセル</button>
+        </div>
+    </div>
+
+    <script src="/static/js/history.js"></script>
+</body>
+</html>

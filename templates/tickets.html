@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チケット管理 - 入園管理システム</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>チケット管理</h1>
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="navigation">
+        <a href="/">入場判定</a>
+        <a href="/tickets-page" class="active">チケット管理</a>
+        <a href="/history-page">履歴管理</a>
+    </div>
+
+    <!-- 新規登録パネル -->
+    <div class="input-panel">
+        <h3>新規チケット登録</h3>
+        <div class="form-group">
+            <label for="tktNumber">TKT番号 (4～5桁):</label>
+            <input type="text" id="tktNumber" placeholder="例: 1234">
+        </div>
+        <div class="form-group">
+            <label for="age">年齢:</label>
+            <input type="number" id="age" placeholder="例: 25">
+        </div>
+        <div class="form-group">
+            <label for="gender">性別:</label>
+            <select id="gender">
+                <option value="">選択してください</option>
+                <option value="男性">男性</option>
+                <option value="女性">女性</option>
+                <option value="それ以外">それ以外</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ticketType">券種:</label>
+            <select id="ticketType">
+                <option value="">選択してください</option>
+                <option value="大人">大人</option>
+                <option value="子供">子供</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="startDate">使用開始日:</label>
+            <input type="date" id="startDate">
+        </div>
+        <div class="form-group">
+            <label for="remarks">備考:</label>
+            <textarea id="remarks" placeholder="任意"></textarea>
+        </div>
+        <button onclick="registerTicket()">新規登録</button>
+        <button class="btn-secondary" onclick="clearForm()">クリア</button>
+    </div>
+
+    <!-- チケット一覧テーブル -->
+    <div class="table-panel">
+        <h3>チケット一覧</h3>
+        <button onclick="loadTickets()" style="margin-bottom: 10px;">更新</button>
+        <table id="ticketsTable">
+            <thead>
+                <tr>
+                    <th>TKT番号</th>
+                    <th>年齢</th>
+                    <th>性別</th>
+                    <th>券種</th>
+                    <th>使用開始日</th>
+                    <th>有効期限</th>
+                    <th>備考</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="ticketsTableBody">
+                <!-- 動的に行を追加 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 編集モーダル -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>チケット編集</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <input type="hidden" id="editTktNumber">
+            <div class="form-group">
+                <label for="editAge">年齢:</label>
+                <input type="number" id="editAge">
+            </div>
+            <div class="form-group">
+                <label for="editGender">性別:</label>
+                <select id="editGender">
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                    <option value="それ以外">それ以外</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editTicketType">券種:</label>
+                <select id="editTicketType">
+                    <option value="大人">大人</option>
+                    <option value="子供">子供</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editStartDate">使用開始日:</label>
+                <input type="date" id="editStartDate">
+            </div>
+            <div class="form-group">
+                <label for="editExpiryDate">有効期限:</label>
+                <input type="date" id="editExpiryDate">
+            </div>
+            <div class="form-group">
+                <label for="editRemarks">備考:</label>
+                <textarea id="editRemarks"></textarea>
+            </div>
+            <button onclick="updateTicket()">更新</button>
+            <button class="btn-secondary" onclick="closeEditModal()">キャンセル</button>
+        </div>
+    </div>
+
+    <script src="/static/js/ticket.js"></script>
+</body>
+</html>

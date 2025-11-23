@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入園管理システム</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>入園管理</h1>
+    </div>
+
+    <!-- ナビゲーション -->
+    <div class="navigation">
+        <a href="/" class="active">入場判定</a>
+        <a href="/tickets-page">チケット管理</a>
+        <a href="/history-page">履歴管理</a>
+    </div>
+
+    <!-- ステータス表示 -->
+    <div class="status-panel">
+        <span class="status-label" id="statusLabel">判定可能</span>
+    </div>
+
+    <!-- 入力パネル -->
+    <div class="input-panel">
+        <div class="input-group">
+            <label for="tktInput">入場判定:</label>
+            <input type="text" id="tktInput" placeholder="TKT番号を入力してEnterキー">
+            <button onclick="performJudgement()">判定実行</button>
+        </div>
+    </div>
+
+    <!-- 入園確認パネル（大きく目立つ表示） -->
+    <div class="judgement-result-panel">
+        <div id="judgementDisplay" class="judgement-display">
+            <div class="judgement-label">入園確認</div>
+            <div id="judgementValue" class="judgement-value">-</div>
+        </div>
+    </div>
+
+    <!-- 情報表示パネル -->
+    <div class="info-panel">
+        <div class="info-grid">
+            <div class="info-item">
+                <label>TKT番号:</label>
+                <span id="displayTktNumber">-</span>
+            </div>
+            <div class="info-item">
+                <label>入園日時:</label>
+                <span id="displayEntryTime">-</span>
+            </div>
+            <div class="info-item">
+                <label>有効期限:</label>
+                <span id="displayExpiry">-</span>
+            </div>
+            <div class="info-item">
+                <label>券種:</label>
+                <span id="displayTicketType">-</span>
+            </div>
+            <div class="info-item">
+                <label>性別:</label>
+                <span id="displayGender">-</span>
+            </div>
+            <div class="info-item">
+                <label>年齢:</label>
+                <span id="displayAge">-</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 判定結果テーブル -->
+    <div class="table-panel">
+        <h3>判定結果一覧</h3>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>判定結果</th>
+                    <th>TKT番号</th>
+                    <th>入園時間</th>
+                    <th>コメント</th>
+                    <th>再入場</th>
+                </tr>
+            </thead>
+            <tbody id="resultTableBody">
+                <!-- 動的に行を追加 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- アクションボタン -->
+    <div class="action-buttons">
+        <button onclick="location.href='/tickets-page'">観客登録</button>
+        <button onclick="showImportDialog()">観客リスト読込</button>
+        <button onclick="exportHistory()">データ出力</button>
+        <button onclick="location.href='/tickets-page'">観客データ修正</button>
+        <button onclick="location.href='/history-page'">入園履歴修正</button>
+    </div>
+
+    <!-- CSV読込モーダル -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>CSV一括登録</h2>
+                <span class="close" onclick="closeImportDialog()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label for="csvFile">CSVファイルを選択:</label>
+                <input type="file" id="csvFile" accept=".csv">
+            </div>
+            <p style="font-size: 12px; color: #666; margin: 10px 0;">
+                フォーマット: TKT番号,年齢,性別,券種,使用開始日,備考
+            </p>
+            <button onclick="uploadCSV()">アップロード</button>
+            <button class="btn-secondary" onclick="closeImportDialog()">キャンセル</button>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
