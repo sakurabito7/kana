@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'MS Gothic', monospace, sans-serif;
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', '游ゴシック', 'Yu Gothic', sans-serif;
     background-color: #f5f5f5;
     padding: 20px;
 }
@@ -21,8 +21,9 @@ body {
 }
 
 .header h1 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
+    letter-spacing: 0.1em;
 }
 
 /* ナビゲーション */
@@ -42,6 +43,9 @@ body {
     border-radius: 3px;
     background-color: #e0e0e0;
     display: inline-block;
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 0.05em;
 }
 
 .navigation a:hover {
@@ -63,8 +67,9 @@ body {
 }
 
 .status-label {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
+    letter-spacing: 0.05em;
 }
 
 .status-ok {
@@ -84,6 +89,13 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.input-panel h3 {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
 .input-group {
     display: flex;
     align-items: center;
@@ -94,6 +106,8 @@ body {
 .input-group label {
     min-width: 100px;
     font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 0.05em;
 }
 
 .input-group input,
@@ -102,7 +116,8 @@ body {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 15px;
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', '游ゴシック', 'Yu Gothic', sans-serif;
 }
 
 .input-group input:focus,
@@ -129,16 +144,17 @@ body {
 }
 
 .judgement-label {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     margin-bottom: 20px;
     color: #333;
+    letter-spacing: 0.05em;
 }
 
 .judgement-value {
     font-size: 80px;
     font-weight: bold;
-    font-family: 'Arial Black', sans-serif;
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', '游ゴシック', 'Yu Gothic', sans-serif;
     padding: 30px;
     border-radius: 10px;
     background-color: #fff;
@@ -149,6 +165,7 @@ body {
     white-space: pre-line;
     flex-direction: column;
     line-height: 1.2;
+    letter-spacing: 0.05em;
 }
 
 /* OK判定（青） */
@@ -199,6 +216,8 @@ body {
 .info-item label {
     font-weight: bold;
     min-width: 100px;
+    font-size: 15px;
+    letter-spacing: 0.05em;
 }
 
 .info-item span {
@@ -206,6 +225,7 @@ body {
     padding: 5px 10px;
     background-color: #fff;
     border-radius: 3px;
+    font-size: 15px;
 }
 
 /* ボタン */
@@ -215,9 +235,12 @@ button {
     border-radius: 3px;
     background-color: #007bff;
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
     margin-right: 10px;
+    letter-spacing: 0.05em;
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', '游ゴシック', 'Yu Gothic', sans-serif;
 }
 
 button:hover {
@@ -259,7 +282,9 @@ button.btn-secondary:hover {
 
 .table-panel h3 {
     margin-bottom: 15px;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
 }
 
 table {
@@ -280,6 +305,8 @@ table td {
 
 table th {
     font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 0.05em;
 }
 
 table tbody tr:hover {
@@ -324,7 +351,9 @@ table tbody tr:hover {
 }
 
 .modal-header h2 {
-    font-size: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
 }
 
 .close {
@@ -346,6 +375,8 @@ table tbody tr:hover {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 0.05em;
 }
 
 .form-group input,
@@ -355,7 +386,8 @@ table tbody tr:hover {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 15px;
+    font-family: 'Meiryo', 'メイリオ', 'Hiragino Kaku Gothic ProN', '游ゴシック', 'Yu Gothic', sans-serif;
 }
 
 .form-group textarea {
@@ -368,6 +400,9 @@ table tbody tr:hover {
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
 }
 
 .alert-success {
@@ -409,6 +444,96 @@ table tbody tr:hover {
     100% { transform: rotate(360deg); }
 }
 
+/* ラジオボタン選択肢のスタイル */
+.radio-group {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 5px;
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 2px solid #dee2e6;
+}
+
+.radio-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #ffffff;
+    border: 2px solid transparent;
+    font-size: 15px;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.radio-option:hover {
+    background-color: #e9ecef;
+    border-color: #A5C8E4;
+}
+
+.radio-option input[type="radio"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.radio-option input[type="radio"]:checked {
+    accent-color: #007bff;
+}
+
+.radio-option:has(input[type="radio"]:checked) {
+    background-color: #A5C8E4;
+    border-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* パネルヘッダー（見出しとメッセージを横並び） */
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    min-height: 50px;
+}
+
+/* メッセージ表示エリア */
+.message-area {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    display: none;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.message-area.show {
+    display: block;
+}
+
+.message-area.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message-area.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.message-area.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
 /* レスポンシブ */
 @media (max-width: 768px) {
     .info-grid {
@@ -422,5 +547,9 @@ table tbody tr:hover {
     table th,
     table td {
         padding: 8px;
+    }
+
+    .radio-group {
+        flex-direction: column;
     }
 }

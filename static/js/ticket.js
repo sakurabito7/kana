@@ -1,29 +1,57 @@
 // API BaseURL
 const API_BASE = '/api';
 
+/**
+ * メッセージを表示
+ */
+function showMessage(message, type = 'info') {
+    const messageArea = document.getElementById('messageArea');
+    if (!messageArea) return;
+
+    messageArea.textContent = message;
+    messageArea.className = `message-area show ${type}`;
+
+    // 3秒後に自動的に消す
+    setTimeout(() => {
+        messageArea.className = 'message-area';
+    }, 3000);
+}
+
 // ページロード時の初期化
 document.addEventListener('DOMContentLoaded', () => {
     loadTickets();
     // 今日の日付をデフォルト値に設定
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('startDate').value = today;
+    // TKT番号にフォーカスを設定
+    document.getElementById('tktNumber').focus();
 });
 
 /**
- * チケット一覧を読み込み
+ * 年間パスポート一覧を読み込み
  */
 async function loadTickets() {
     try {
+        console.log('年間パスポート一覧を読み込み中...');
         const response = await fetch(`${API_BASE}/tickets`);
         const data = await response.json();
 
+        console.log('APIレスポンス:', data);
+
         if (!response.ok) {
-            alert(data.error || 'チケット一覧の取得に失敗しました');
+            console.error('APIエラー:', data.error);
+            showMessage(data.error || '年間パスポート一覧の取得に失敗しました', 'error');
             return;
         }
 
         const tbody = document.getElementById('ticketsTableBody');
+        if (!tbody) {
+            console.error('ticketsTableBody要素が見つかりません');
+            return;
+        }
+
         tbody.innerHTML = '';
+        console.log(`チケット数: ${data.tickets.length}`);
 
         data.tickets.forEach(ticket => {
             const row = tbody.insertRow();
@@ -44,29 +72,32 @@ async function loadTickets() {
 
     } catch (error) {
         console.error('Error:', error);
-        alert('チケット一覧の取得中にエラーが発生しました');
+        showMessage('年間パスポート一覧の取得中にエラーが発生しました', 'error');
     }
 }
 
 /**
- * チケット新規登録
+ * 年間パスポート新規登録
  */
 async function registerTicket() {
+    console.log('年間パスポート登録開始...');
+
     const tktNumber = document.getElementById('tktNumber').value.trim();
     const age = document.getElementById('age').value;
-    const gender = document.getElementById('gender').value;
-    const ticketType = document.getElementById('ticketType').value;
+    const genderElement = document.querySelector('input[name="gender"]:checked');
+    const ticketTypeElement = document.querySelector('input[name="ticketType"]:checked');
     const startDate = document.getElementById('startDate').value;
     const remarks = document.getElementById('remarks').value;
 
+    const gender = genderElement ? genderElement.value : null;
+    const ticketType = ticketTypeElement ? ticketTypeElement.value : null;
+
+    console.log('入力値:', { tktNumber, age, gender, ticketType, startDate, remarks });
+
     // バリデーション
     if (!tktNumber || !age || !gender || !ticketType || !startDate) {
-        alert('必須項目を入力してください');
-        return;
-    }
-
-    if (!/^\d{4,5}$/.test(tktNumber)) {
-        alert('TKT番号は4～5桁の数字で入力してください');
+        console.error('必須項目が未入力');
+        showMessage('必須項目を入力してください', 'error');
         return;
     }
 
@@ -91,18 +122,26 @@ async function registerTicket() {
         const data = await response.json();
 
         if (!response.ok) {
-            const errorMsg = Array.isArray(data.error) ? data.error.join('\n') : data.error;
-            alert(errorMsg || 'チケット登録に失敗しました');
+            const errorMsg = Array.isArray(data.error) ? data.error.join(', ') : data.error;
+            showMessage(errorMsg || '年間パスポート登録に失敗しました', 'error');
             return;
         }
 
-        alert('チケットを登録しました');
+        showMessage('年間パスポートを登録しました', 'success');
         clearForm();
         loadTickets();
 
+        // TKT番号にフォーカスを戻す
+        document.getElementById('tktNumber').focus();
+
+        // メモリキャッシュを更新（main.jsの関数が存在する場合）
+        if (typeof loadAllTicketsToCache === 'function') {
+            await loadAllTicketsToCache();
+        }
+
     } catch (error) {
         console.error('Error:', error);
-        alert('チケット登録中にエラーが発生しました');
+        showMessage('年間パスポート登録中にエラーが発生しました', 'error');
     }
 }
 
@@ -112,11 +151,17 @@ async function registerTicket() {
 function clearForm() {
     document.getElementById('tktNumber').value = '';
     document.getElementById('age').value = '';
-    document.getElementById('gender').value = '';
-    document.getElementById('ticketType').value = '';
+
+    // ラジオボタンのチェックを外す
+    document.querySelectorAll('input[name="gender"]').forEach(radio => radio.checked = false);
+    document.querySelectorAll('input[name="ticketType"]').forEach(radio => radio.checked = false);
+
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('startDate').value = today;
     document.getElementById('remarks').value = '';
+
+    // TKT番号にフォーカスを戻す
+    document.getElementById('tktNumber').focus();
 }
 
 /**
@@ -128,7 +173,7 @@ async function openEditModal(tktNumber) {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error || 'チケット情報の取得に失敗しました');
+            showMessage(data.error || '年間パスポート情報の取得に失敗しました', 'error');
             return;
         }
 
@@ -146,7 +191,7 @@ async function openEditModal(tktNumber) {
 
     } catch (error) {
         console.error('Error:', error);
-        alert('チケット情報の取得中にエラーが発生しました');
+        showMessage('年間パスポート情報の取得中にエラーが発生しました', 'error');
     }
 }
 
@@ -158,7 +203,7 @@ function closeEditModal() {
 }
 
 /**
- * チケット更新
+ * 年間パスポート更新
  */
 async function updateTicket() {
     const tktNumber = document.getElementById('editTktNumber').value;
@@ -190,22 +235,27 @@ async function updateTicket() {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error || 'チケット更新に失敗しました');
+            showMessage(data.error || '年間パスポート更新に失敗しました', 'error');
             return;
         }
 
-        alert('チケットを更新しました');
+        showMessage('年間パスポートを更新しました', 'success');
         closeEditModal();
         loadTickets();
 
+        // メモリキャッシュを更新（main.jsの関数が存在する場合）
+        if (typeof loadAllTicketsToCache === 'function') {
+            await loadAllTicketsToCache();
+        }
+
     } catch (error) {
         console.error('Error:', error);
-        alert('チケット更新中にエラーが発生しました');
+        showMessage('年間パスポート更新中にエラーが発生しました', 'error');
     }
 }
 
 /**
- * チケット削除
+ * 年間パスポート削除
  */
 async function deleteTicket(tktNumber) {
     if (!confirm(`TKT番号 ${tktNumber} を削除しますか？`)) {
@@ -220,17 +270,29 @@ async function deleteTicket(tktNumber) {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error || 'チケット削除に失敗しました');
+            showMessage(data.error || '年間パスポート削除に失敗しました', 'error');
             return;
         }
 
-        alert('チケットを削除しました');
+        showMessage('年間パスポートを削除しました', 'success');
         loadTickets();
+
+        // メモリキャッシュを更新（main.jsの関数が存在する場合）
+        if (typeof loadAllTicketsToCache === 'function') {
+            await loadAllTicketsToCache();
+        }
 
     } catch (error) {
         console.error('Error:', error);
-        alert('チケット削除中にエラーが発生しました');
+        showMessage('年間パスポート削除中にエラーが発生しました', 'error');
     }
+}
+
+/**
+ * 年間パスポートデータをCSV出力
+ */
+function exportTickets() {
+    window.location.href = `${API_BASE}/export/tickets`;
 }
 
 /**

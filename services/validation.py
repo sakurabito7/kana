@@ -6,12 +6,9 @@ class ValidationService:
 
     @staticmethod
     def validate_tkt_number(tkt_number):
-        """TKT番号のバリデーション（4～5桁の数字）"""
+        """TKT番号のバリデーション"""
         if not tkt_number:
             return False, "TKT番号が入力されていません"
-
-        if not re.match(r'^\d{4,5}$', tkt_number):
-            return False, "TKT番号は4～5桁の数字で入力してください"
 
         return True, None
 

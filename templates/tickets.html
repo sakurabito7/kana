@@ -3,66 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チケット管理 - 入園管理システム</title>
+    <title>年間パスポート管理 - 入園管理システム</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <!-- ヘッダー -->
     <div class="header">
-        <h1>チケット管理</h1>
+        <h1>年間パスポート管理</h1>
     </div>
 
     <!-- ナビゲーション -->
     <div class="navigation">
         <a href="/">入場判定</a>
-        <a href="/tickets-page" class="active">チケット管理</a>
+        <a href="/tickets-page" class="active">年間パスポート管理</a>
         <a href="/history-page">履歴管理</a>
     </div>
 
     <!-- 新規登録パネル -->
     <div class="input-panel">
-        <h3>新規チケット登録</h3>
+        <div class="panel-header">
+            <h3>新規登録</h3>
+            <div id="messageArea" class="message-area"></div>
+        </div>
         <div class="form-group">
-            <label for="tktNumber">TKT番号 (4～5桁):</label>
-            <input type="text" id="tktNumber" placeholder="例: 1234">
+            <label for="tktNumber">TKT番号:</label>
+            <input type="text" id="tktNumber" placeholder="例: 1234" tabindex="1">
         </div>
         <div class="form-group">
             <label for="age">年齢:</label>
-            <input type="number" id="age" placeholder="例: 25">
+            <input type="number" id="age" placeholder="例: 25" tabindex="2">
         </div>
         <div class="form-group">
-            <label for="gender">性別:</label>
-            <select id="gender">
-                <option value="">選択してください</option>
-                <option value="男性">男性</option>
-                <option value="女性">女性</option>
-                <option value="それ以外">それ以外</option>
-            </select>
+            <label>性別:</label>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="gender" value="男性" tabindex="3">
+                    <span>男性</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="gender" value="女性" tabindex="3">
+                    <span>女性</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="gender" value="それ以外" tabindex="3">
+                    <span>それ以外</span>
+                </label>
+            </div>
         </div>
         <div class="form-group">
-            <label for="ticketType">券種:</label>
-            <select id="ticketType">
-                <option value="">選択してください</option>
-                <option value="大人">大人</option>
-                <option value="子供">子供</option>
-            </select>
+            <label>券種:</label>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="ticketType" value="大人" tabindex="-1">
+                    <span>大人</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="ticketType" value="子供" tabindex="-1">
+                    <span>子供</span>
+                </label>
+            </div>
         </div>
         <div class="form-group">
             <label for="startDate">使用開始日:</label>
-            <input type="date" id="startDate">
+            <input type="date" id="startDate" tabindex="-1">
         </div>
         <div class="form-group">
             <label for="remarks">備考:</label>
-            <textarea id="remarks" placeholder="任意"></textarea>
+            <textarea id="remarks" placeholder="任意" tabindex="-1"></textarea>
         </div>
-        <button onclick="registerTicket()">新規登録</button>
-        <button class="btn-secondary" onclick="clearForm()">クリア</button>
+        <button onclick="registerTicket()" tabindex="4">新規登録</button>
+        <button class="btn-secondary" onclick="clearForm()" tabindex="-1">クリア</button>
     </div>
 
-    <!-- チケット一覧テーブル -->
+    <!-- 年間パスポート一覧テーブル -->
     <div class="table-panel">
-        <h3>チケット一覧</h3>
+        <h3>年間パスポート一覧</h3>
         <button onclick="loadTickets()" style="margin-bottom: 10px;">更新</button>
+        <button onclick="exportTickets()" style="margin-bottom: 10px;">CSV出力</button>
         <table id="ticketsTable">
             <thead>
                 <tr>
@@ -86,7 +103,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>チケット編集</h2>
+                <h2>年間パスポート編集</h2>
                 <span class="close" onclick="closeEditModal()">&times;</span>
             </div>
             <input type="hidden" id="editTktNumber">

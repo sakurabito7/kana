@@ -1,8 +1,11 @@
 // API BaseURL
 const API_BASE = '/api';
 
+// チケットデータをメモリにキャッシュ
+let ticketCache = new Map();
+
 // ページロード時の初期化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // TKT入力フィールドでEnterキー押下時に判定実行
     const tktInput = document.getElementById('tktInput');
     if (tktInput) {
@@ -16,7 +19,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 最新の履歴を読み込み
     loadRecentHistory();
+
+    // 全チケットデータをメモリに読み込み
+    await loadAllTicketsToCache();
 });
+
+/**
+ * 全チケットデータをメモリに読み込み
+ */
+async function loadAllTicketsToCache() {
+    try {
+        const response = await fetch(`${API_BASE}/tickets`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error('チケットデータの読み込みに失敗しました');
+            return;
+        }
+
+        // キャッシュをクリアして再構築
+        ticketCache.clear();
+        data.tickets.forEach(ticket => {
+            ticketCache.set(ticket.tkt_number, ticket);
+        });
+
+        console.log(`${ticketCache.size}件のチケットデータをメモリに読み込みました`);
+
+    } catch (error) {
+        console.error('チケットデータ読み込みエラー:', error);
+    }
+}
+
+/**
+ * サーバから特定のチケットを取得してキャッシュに追加
+ */
+async function fetchAndCacheTicket(tktNumber) {
+    try {
+        const response = await fetch(`${API_BASE}/tickets/${tktNumber}`);
+        const data = await response.json();
+
+        if (response.ok && data.ticket) {
+            // キャッシュに追加
+            ticketCache.set(tktNumber, data.ticket);
+            return data.ticket;
+        }
+
+        return null;
+
+    } catch (error) {
+        console.error('チケット取得エラー:', error);
+        return null;
+    }
+}
 
 /**
  * 入場判定を実行
@@ -26,11 +80,22 @@ async function performJudgement() {
     const tktNumber = tktInput.value.trim();
 
     if (!tktNumber) {
-        alert('TKT番号を入力してください');
+        // TKT番号未入力の場合は単にフォーカスを戻す
+        tktInput.focus();
         return;
     }
 
     try {
+        // 1. まずキャッシュから検索（高速化のため）
+        let ticket = ticketCache.get(tktNumber);
+
+        // 2. キャッシュに無ければサーバから取得を試みる
+        if (!ticket) {
+            console.log(`TKT番号 ${tktNumber} がキャッシュに無いため、サーバから取得を試みます`);
+            ticket = await fetchAndCacheTicket(tktNumber);
+        }
+
+        // 3. サーバに判定リクエストを送信（登録なしの場合も送信して履歴に記録）
         const response = await fetch(`${API_BASE}/entry/judge`, {
             method: 'POST',
             headers: {
@@ -42,11 +107,36 @@ async function performJudgement() {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error || '判定処理に失敗しました');
+            // サーバエラーの場合、エラーメッセージを表示して処理を中断
+            console.error('サーバエラー:', data.error);
+
+            // エラーもNG判定として表示
+            const errorData = {
+                judgement: {
+                    valid: false,
+                    result: 'NG',
+                    comment: data.error || '判定処理に失敗',
+                    ticket: null
+                },
+                entry_log: {
+                    tkt_number: tktNumber,
+                    entry_time: new Date().toISOString(),
+                    result: 'NG',
+                    comment: data.error || '判定処理に失敗'
+                }
+            };
+
+            displayJudgementResult(errorData);
+
+            tktInput.value = '';
+            tktInput.focus();
+
+            // エラーの場合も履歴を更新（サーバで記録された可能性があるため）
+            loadRecentHistory();
             return;
         }
 
-        // 判定結果を表示
+        // 判定結果を表示（OK/NG両方、音声も再生される）
         displayJudgementResult(data);
 
         // 入力フィールドをクリア
@@ -58,7 +148,27 @@ async function performJudgement() {
 
     } catch (error) {
         console.error('Error:', error);
-        alert('判定処理中にエラーが発生しました');
+
+        // エラーもNG判定として表示
+        const errorData = {
+            judgement: {
+                valid: false,
+                result: 'NG',
+                comment: '判定処理中にエラーが発生しました',
+                ticket: null
+            },
+            entry_log: {
+                tkt_number: tktNumber,
+                entry_time: new Date().toISOString(),
+                result: 'NG',
+                comment: '判定処理中にエラーが発生しました'
+            }
+        };
+
+        displayJudgementResult(errorData);
+
+        tktInput.value = '';
+        tktInput.focus();
     }
 }
 
@@ -82,19 +192,35 @@ function displayJudgementResult(data) {
     const judgementDisplay = document.getElementById('judgementDisplay');
     const judgementValue = document.getElementById('judgementValue');
 
-    // 表示テキスト（コメントがあれば小さく表示）
-    if (comment) {
-        judgementValue.innerHTML = `<div style="font-size: 80px;">${result}</div><div style="font-size: 40px; margin-top: 10px;">(${comment})</div>`;
-    } else {
-        judgementValue.innerHTML = `<div style="font-size: 80px;">${result}</div>`;
-    }
-
     // 色とスタイルを設定
     judgementDisplay.className = 'judgement-display';
+
     if (result === 'OK') {
+        // OK時の表示
         judgementDisplay.classList.add('judgement-ok');
+
+        let genderAge = '';
+        if (ticket) {
+            genderAge = `<div style="font-size: 50px; margin-top: 10px;">${ticket.gender} ${ticket.age}歳</div>`;
+        }
+
+        if (comment) {
+            // 再入場の場合
+            judgementValue.innerHTML = `<div style="font-size: 80px;">${result}</div><div style="font-size: 40px; margin-top: 10px;">(${comment})</div>${genderAge}`;
+        } else {
+            judgementValue.innerHTML = `<div style="font-size: 80px;">${result}</div>${genderAge}`;
+        }
+
     } else if (result === 'NG') {
+        // NG時の表示（背景赤、理由を明確に表示）
         judgementDisplay.classList.add('judgement-ng');
+
+        if (comment) {
+            // NGの理由を大きく表示
+            judgementValue.innerHTML = `<div style="font-size: 100px; font-weight: bold;">${result}</div><div style="font-size: 50px; margin-top: 20px; font-weight: bold;">${comment}</div>`;
+        } else {
+            judgementValue.innerHTML = `<div style="font-size: 100px; font-weight: bold;">${result}</div>`;
+        }
     }
 
     // 情報表示エリア更新
@@ -214,6 +340,9 @@ async function uploadCSV() {
 
         alert(data.message);
         closeImportDialog();
+
+        // キャッシュを再読み込み
+        await loadAllTicketsToCache();
 
     } catch (error) {
         console.error('Error:', error);
