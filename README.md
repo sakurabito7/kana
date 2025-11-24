@@ -258,14 +258,34 @@ PORT = 5001  # 別のポート番号に変更
 
 CSVファイルの文字化けが発生する場合は、UTF-8（BOM付き）で保存してください。
 
+## Web公開（無料ホスティング）
+
+このアプリケーションは以下の無料サービスで公開できます。詳細な手順は **DEPLOY.md** を参照してください。
+
+### PythonAnywhere（推奨）
+- Pythonに特化したホスティング
+- 無料プラン: 1つのWebアプリ、512MB RAM
+- SQLite対応
+- URL例: `yourusername.pythonanywhere.com`
+
+### その他のオプション
+- **Render**: 自動デプロイ、独自ドメイン対応
+- **Railway**: $5/月の無料クレジット、PostgreSQL対応
+- **Fly.io**: 3つの小規模アプリ無料、グローバル展開可能
+- **Replit**: ブラウザ上で開発・公開
+
 ## 本番環境へのデプロイ
 
 本番環境で使用する場合は、以下の設定変更を推奨します：
 
 1. `config.py` で `DEBUG = False` に設定
 2. `SECRET_KEY` を環境変数で設定
-3. SQLiteではなくPostgreSQLやMySQLを使用
+3. SQLiteではなくPostgreSQLやMySQLを使用（本格運用の場合）
 4. Gunicorn + Nginxなどの本番用Webサーバーを使用
+
+**セキュリティに関する注意:**
+- 現在のアプリケーションには認証機能がありません
+- 公開する場合はBasic認証やログイン機能の追加を推奨
 
 ## ライセンス
 
