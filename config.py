@@ -5,7 +5,7 @@ class Config:
 
     # データベース設定
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_DIR, "entry_management.db")}'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'sqlite:///{os.path.join(BASE_DIR, "entry_management.db")}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Flask設定
@@ -13,8 +13,8 @@ class Config:
 
     # サーバ設定
     HOST = '0.0.0.0'  # すべてのネットワークインターフェースでリッスン
-    PORT = 5000
-    DEBUG = True  # 本番環境ではFalseに設定
+    PORT = int(os.environ.get('PORT', 5000))
+    DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 
     # アップロード設定
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
